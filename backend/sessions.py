@@ -214,7 +214,7 @@ class Session:
         # 上下文对话不使用知识库问答
         if not ("上面" in input_text or "上述" in input_text or "以上" in input_text or ("不" in input_text and "知识库" in input_text)):
             doc_txt = ""
-            es_doc = es_search.do_search(query = f"搜索结果必须包含搜索内容[]或者【】里面的内容，搜索内容：{input_text}")
+            es_doc = es_search.do_search(query = input_text)
             # 解析Document内容
             for doc_index, raw_data in enumerate(es_doc, start=1):
                 raw_data = raw_data[0]
