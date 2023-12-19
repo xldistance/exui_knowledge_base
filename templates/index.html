@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>ExUI</title>
+        <link rel="stylesheet" type="text/css"  href="{{ url_for('static', filename='theme.css') }}">
+        <link rel="stylesheet" type="text/css"  href="{{ url_for('static', filename='style.css') }}">
+        <link rel="stylesheet" type="text/css"  href="{{ url_for('static', filename='scrollbar.css') }}">
+        <link rel="stylesheet" type="text/css"  href="{{ url_for('static', filename='slider.css') }}">
+        <link rel="stylesheet" type="text/css"  href="{{ url_for('static', filename='controls.css') }}">
+        <link rel="stylesheet" type="text/css"  href="{{ url_for('static', filename='mainmenu.css') }}">
+        <link rel="stylesheet" type="text/css"  href="{{ url_for('static', filename='settings.css') }}">
+        <link rel="stylesheet" type="text/css"  href="{{ url_for('static', filename='spinner.css') }}">
+        <link rel="stylesheet" type="text/css"  href="{{ url_for('static', filename='models.css') }}">
+        <link rel="stylesheet" type="text/css"  href="{{ url_for('static', filename='chat.css') }}">
+        <link rel="stylesheet" type="text/css"  href="{{ url_for('static', filename='notepad.css') }}">
+        <link rel="stylesheet" type="text/css"  href="{{ url_for('static', filename='overlay.css') }}">
+        <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='gfx/favicon.png') }}">
+        {% include 'svg_icons.html' %}
+    </head>
+    <body>
+        <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+        <script type="module" src="{{ url_for('static', filename='util.js') }}"></script>
+        <script type="module" src="{{ url_for('static', filename='roles.js') }}"></script>
+        <script type="module" src="{{ url_for('static', filename='globals.js') }}"></script>
+        <script type="module" src="{{ url_for('static', filename='overlay.js') }}"></script>
+        <script type="module" src="{{ url_for('static', filename='controls.js') }}"></script>
+        <script type="module" src="{{ url_for('static', filename='mainmenu.js') }}"></script>
+        <script type="module" src="{{ url_for('static', filename='settings.js') }}"></script>
+        <script type="module" src="{{ url_for('static', filename='theme.js') }}"></script>
+        <script type="module" src="{{ url_for('static', filename='models.js') }}"></script>
+        <script type="module" src="{{ url_for('static', filename='chat.js') }}"></script>
+        <script type="module" src="{{ url_for('static', filename='chatsettings.js') }}"></script>
+        <script type="module" src="{{ url_for('static', filename='notepad.js') }}"></script>
+        <script type="module" src="{{ url_for('static', filename='notepadsettings.js') }}"></script>
+        <script type="module" src="{{ url_for('static', filename='main.js') }}"></script>
+    </body>
+</html>

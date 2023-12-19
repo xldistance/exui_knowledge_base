@@ -1,0 +1,54 @@
+
+body {
+    font-family: var(--font-family);
+    font-size: var(--font-size-medium);
+    padding: 0px;
+    margin: 0px;
+    display: flex;
+    background-color: var(--background-color-menu);
+    color: var(--textcolor-menu);
+}
+
+.p-header {
+    font-family: var(--font-family);
+    font-size: var(--font-size-large);
+}
+
+.vflex {
+    display: flex;
+    flex-direction: row;
+}
+
+.vflex.grow {
+    flex-grow: 1;
+}
+
+.hflex {
+    display: flex;
+    flex-direction: column;
+}
+
+.hflex.grow {
+    flex-grow: 1;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.no-select {
+    user-select: none; /* Standard syntax */
+    -webkit-user-select: none; /* Chrome and Safari */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE 10+ */
+}
+
+svg {
+    fill: var(--iconcolor);
+    color: var(--iconcolor);
+    text-shadow: 5px 5px 5px rgb(253, 246, 227);
+}
+
+svg.active {
+    fill: var(--iconcolor-active);
+}
