@@ -37,19 +37,23 @@ def set_cancel_signal():
     global cancel_signal
     cancel_signal = True
 
-def find_repeated_segments(text: str, delimiters: list = ["、", ".", "："," ","-"]):
+def find_repeated_segments(text: str, delimiters: list = ["、", ".", "：","-"]):
     """
-    查找重复段落
+    查找重复段落，终止对话条件
     """
+    text = text.strip()
+    # 回答中有|im_end则终止对话
+    if "|im_end" in text:
+        return True
     # 统一替换不同的分隔符为"，"
     for delimiter in delimiters:
         text = text.replace(delimiter, "，")
-    segments = text.split("，")
+    segments = text.strip().split("，")
     repeat_content = defaultdict(int)
     for segment in segments:
         repeat_content[segment] += 1
-        # 过滤掉segment为分隔符和为空字符的情况
-        if repeat_content[segment] > 3 and segment and segment not in delimiters:
+        # 过滤掉segment为分隔符的情况
+        if repeat_content[segment] > 3 and segment not in delimiters:
             print(f"重复段落：{segment}内容超过3次，退出回答")
             return True
     return False
@@ -122,7 +126,7 @@ def get_default_session_settings():
         "roles": [ "User", "Assistant", "", "", "", "", "", "" ],
         "system_prompt_default": True,
         "system_prompt": "以下回答请用中文回复，不会的问题请直接回复我不知道，不允许捏造答案",
-        "maxtokens": 30000,
+        "maxtokens": 20000,
         "chunktokens": 512,
         "stop_newline": False,
         "temperature": 0.6,
@@ -212,7 +216,7 @@ class Session:
         prompt_format = prompt_formats[self.settings["prompt_format"]]()
         input_text:str = data["user_input_text"]
         # 上下文对话不使用知识库问答
-        if not ("上面" in input_text or "上述" in input_text or "以上" in input_text or ("不" in input_text and "知识库" in input_text)):
+        if not ("上面" in input_text or "上述" in input_text or "以上" in input_text or "知识库" in input_text):
             doc_txt = ""
             es_doc = es_search.do_search(query = input_text)
             # 解析Document内容
