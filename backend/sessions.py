@@ -37,7 +37,7 @@ def set_cancel_signal():
     global cancel_signal
     cancel_signal = True
 
-def find_repeated_segments(text: str, delimiters: list = ["、", ".", "：","-"]):
+def find_repeated_segments(text: str, delimiters: list = ["、", "：","-"]):
     """
     查找重复段落，终止对话条件
     """
@@ -608,4 +608,3 @@ class Session:
                 self.history[i] = block
                 break
         self.save()
-
