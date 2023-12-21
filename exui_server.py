@@ -5,7 +5,6 @@ from flask import Flask, render_template, request
 from flask import Response, stream_with_context
 from waitress import serve
 import webbrowser
-
 import torch
 
 from backend.models import update_model, load_models, get_model_info, list_models, remove_model, load_model, unload_model, get_loaded_model
@@ -14,7 +13,6 @@ from backend.sessions import list_sessions, set_session, get_session, get_defaul
 from backend.notepads import list_notepads, set_notepad, get_notepad, get_default_notepad_settings, new_notepad, delete_notepad, set_notepad_cancel_signal
 from backend.prompts import list_prompt_formats
 from backend.settings import get_settings, set_settings
-
 
 if os.name == "nt":
     # Fix Windows inferring text/plain MIME type for static files
@@ -30,7 +28,7 @@ api_lock_cancel = Lock()
 
 parser = argparse.ArgumentParser(description="ExUI, chatbot UI for ExLlamaV2")
 parser.add_argument("-host", "--host", type = str, help = "IP:PORT eg, 0.0.0.0:5000", default = "localhost:5000")
-parser.add_argument("-d", "--dir", type = str, help = "Location for user data and sessions, default: ~/exui", default = "~/exui")
+parser.add_argument("-d", "--dir", type = str, help = "Location for user data and sessions, default: exui_dialogue", default = "exui_dialogue")
 parser.add_argument("-v", "--verbose", action = "store_true", help = "Verbose (debug) mode")
 parser.add_argument("-nb,", "--no_browser", action = "store_true", help = "Don't launch browser on startup")
 args = parser.parse_args()
@@ -151,9 +149,10 @@ def api_new_session():
         data = request.get_json()
         if verbose: print("<-", data)
         session = new_session()
-        if "settings" in data: get_session().update_settings(data["settings"])
-        if "user_input_text" in data: get_session().user_input(data)
-        if "new_name" in data: get_session().rename(data)
+        current_session = get_session()
+        if "settings" in data: current_session.update_settings(data["settings"])
+        if "user_input_text" in data: current_session.user_input(data)
+        if "new_name" in data: current_session.rename(data)
         result = { "result": "ok", "session": session }
         if verbose: print("-> (...)")
         return json.dumps(result) + "\n"
@@ -440,10 +439,8 @@ def api_cancel_notepad_generate():
 # torch.cuda._lazy_init()
 
 # Prepare config
-
-print(f" -- User dir: {args.dir}")
-
-set_config_dir(args.dir)
+dir_path = set_config_dir(args.dir)
+print(f" -- User dir: {dir_path}")
 global_state.load()
 load_models()
 
@@ -462,4 +459,3 @@ if browser_start:
     print(f" -- Opening UI in default web browser")
 
 serve(app, host = host, port = port, threads = 8)
-
