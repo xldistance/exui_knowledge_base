@@ -1,18 +1,24 @@
-import sys, os, json
+import json
+from pathlib import Path
 
-config_dir: str = "///"
+# 获取当前文件的父目录路径
+parent_path = Path(__file__).parent.parent
 
-def set_config_dir(config_dir_):
-    global config_dir
-    config_dir = os.path.expanduser(config_dir_)
-    if not os.path.exists(config_dir):
-        os.makedirs(config_dir)
 
+
+def set_config_dir(filename):
+    file_path = parent_path / filename
+    # 检查路径是否存在，如果不存在则创建它
+    if not file_path.exists():
+        file_path.mkdir()
+    return file_path
+
+# 创建exui_dialogue文件夹
+dialogue_path = set_config_dir("exui_dialogue")
 
 def config_filename(filename: str):
-    global config_dir
-    return os.path.join(config_dir, filename)
-
+    # 返回连接后的完整文件路径
+    return dialogue_path / filename
 
 class GlobalState:
 
@@ -21,9 +27,9 @@ class GlobalState:
 
     def load(self):
 
-        filename = config_filename("state.json")
-        if os.path.exists(filename):
-            with open(filename, "r") as f:
+        file_path = config_filename("state.json")
+        if file_path.exists():
+            with open(file_path, "r") as f:
                 r = json.load(f)
         else:
             r = {}
@@ -33,9 +39,9 @@ class GlobalState:
 
         r = {}
 
-        filename = config_filename("state.json")
+        file_path = config_filename("state.json")
         r_json = json.dumps(r, indent = 4)
-        with open(filename, "w") as outfile:
+        with open(file_path, "w") as outfile:
             outfile.write(r_json)
 
 
