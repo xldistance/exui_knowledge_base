@@ -17,16 +17,19 @@ from exllamav2.generator.filters import (
 )
 from typing import List
 from collections import defaultdict
-from backend.config import set_config_dir, global_state, config_filename
+from backend.config import global_state, config_filename
 from backend.models import get_loaded_model
 from backend.prompts import prompt_formats
 from backend.util import MultiTimer
 from server.knowledge_base.kb_service.es_kb_service import ESKBService,VECTOR_SEARCH_TOP_K
+from server.chat.search_engine_chat import SEARCH_ENGINES,search_result2docs
 #kb_name_select = int(input(f"请输入ElasticSearch知识库名称索引，可选索引0-->coding,1-->wiki："))
 #knowledge_base_name = ["coding","wiki"][kb_name_select]
 # 初始化elastic_search向量数据库
 es_search = ESKBService(knowledge_base_name = "wiki")
 es_search.do_init()
+# 选择搜索引擎
+search_engine = SEARCH_ENGINES["duckduckgo"]
 session_list: dict or None = None
 current_session = None
 
@@ -52,8 +55,8 @@ def find_repeated_segments(text: str, delimiters: list = ["、", "：","-"]):
     repeat_content = defaultdict(int)
     for segment in segments:
         repeat_content[segment] += 1
-        # 过滤掉segment为分隔符的情况
-        if repeat_content[segment] > 3 and segment not in delimiters:
+        # 过滤掉segment为分隔符和空字符串的情况
+        if repeat_content[segment] > 3 and segment not in delimiters and segment:
             print(f"重复段落：{segment}内容超过3次，退出回答")
             return True
     return False
@@ -65,7 +68,7 @@ def list_sessions():
     if session_list is None:
 
         s_pattern = config_filename("session_*.json")
-        s_files = glob.glob(s_pattern)
+        s_files = glob.glob(str(s_pattern))
         s_files = sorted(s_files, key = os.path.getctime)
 
         session_list = {}
@@ -215,8 +218,18 @@ class Session:
     def user_input(self, data):
         prompt_format = prompt_formats[self.settings["prompt_format"]]()
         input_text:str = data["user_input_text"]
+        # 网络搜索问答
+        if input_text.startswith("net"):
+            input_text = input_text.replace("net","")
+            
+            results = search_engine(
+                input_text
+            )
+            docs = search_result2docs(results)
+            doc_txt = "\n".join([f"搜索结果：{doc.page_content}" for doc in docs])
+            input_text = f"请结合以下内容详细回答问题，提供的内容：\n{doc_txt}，问题：\n{input_text}"
         # 上下文对话不使用知识库问答
-        if not ("上面" in input_text or "上述" in input_text or "以上" in input_text or "知识库" in input_text):
+        elif not ("上面" in input_text or "上述" in input_text or "以上" in input_text):
             doc_txt = ""
             es_doc = es_search.do_search(query = input_text)
             # 解析Document内容
@@ -564,7 +577,7 @@ class Session:
 
         # Save response block
 
-        new_block["text"] = prefix + full_response.rstrip()
+        new_block["text"] = prefix + full_response.rstrip().replace("<|im_end|>","")
         self.history.append(new_block)
         self.save()
 
