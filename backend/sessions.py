@@ -40,7 +40,7 @@ def set_cancel_signal():
     global cancel_signal
     cancel_signal = True
 
-def find_repeated_segments(text: str, delimiters: list = ["、", "：","-"]):
+def find_repeated_segments(text: str, delimiters: list = ["、", "：","-","\n","```"]):
     """
     查找重复段落，终止对话条件
     """
@@ -54,6 +54,9 @@ def find_repeated_segments(text: str, delimiters: list = ["、", "：","-"]):
     segments = text.strip().split("，")
     repeat_content = defaultdict(int)
     for segment in segments:
+        # 过滤ASCII 编码字符串
+        if segment.isascii():
+            continue
         repeat_content[segment] += 1
         # 过滤掉segment为分隔符和空字符串的情况
         if repeat_content[segment] > 3 and segment not in delimiters and segment:
