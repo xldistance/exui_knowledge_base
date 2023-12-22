@@ -558,6 +558,9 @@ class Session:
                 yield json.dumps(packet) + "\n"
 
                 full_response += chunk_buffer
+                # 过滤知识库搜索推送的多余内容
+                if f"来源-{VECTOR_SEARCH_TOP_K+1}" in full_response:
+                    set_cancel_signal()
                 # 重复回复则停止回答
                 if find_repeated_segments(full_response):
                     set_cancel_signal()
