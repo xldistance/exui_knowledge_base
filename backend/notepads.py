@@ -35,7 +35,7 @@ def list_notepads():
     if notepad_list is None:
 
         s_pattern = config_filename("notepad_*.json")
-        s_files = glob.glob(s_pattern)
+        s_files = glob.glob(str(s_pattern))
         s_files = sorted(s_files, key = os.path.getctime)
 
         notepad_list = {}
