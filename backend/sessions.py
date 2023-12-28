@@ -232,7 +232,7 @@ class Session:
             doc_txt = "\n".join([f"搜索结果：{doc.page_content}" for doc in docs])
             input_text = f"请结合以下内容详细回答问题，提供的内容：\n{doc_txt}，问题：\n{input_text}"
         # 上下文对话不使用知识库问答
-        elif not ("上面" in input_text or "上述" in input_text or "以上" in input_text):
+        elif not ("上面" in input_text or "上述" in input_text or "以上" in input_text or "继续" in input_text):
             doc_txt = ""
             es_doc = es_search.do_search(query = input_text)
             # 解析Document内容
