@@ -567,7 +567,7 @@ class Session:
                 chunk_buffer = ""
                 last_chunk_time = now
 
-            if eos or generated_tokens == self.max_new_tokens: break
+            if (eos and full_response) or generated_tokens == self.max_new_tokens: break
 
         # Compile metadata
 
