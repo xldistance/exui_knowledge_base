@@ -562,8 +562,8 @@ class Session:
                 if f"来源-{VECTOR_SEARCH_TOP_K+1}" in full_response:
                     set_cancel_signal()
                 # 重复回复则停止回答
-                if find_repeated_segments(full_response):
-                    set_cancel_signal()
+                #if find_repeated_segments(full_response):
+                    #set_cancel_signal()
                 chunk_buffer = ""
                 last_chunk_time = now
 
